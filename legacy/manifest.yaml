@@ -1,0 +1,76 @@
+id: maple-proxy
+title: Maple Proxy
+version: 0.5.1.0
+release-notes: First StartOS 0.3.5.x package of Maple Proxy. Includes the OpenAI-compatible API and chat page.
+license: MIT
+wrapper-repo: https://github.com/bobodread876/maple-proxy-startos
+upstream-repo: https://github.com/MaplePrivacyLabs/Maple
+support-site: https://github.com/bobodread876/maple-proxy-startos/issues
+marketing-site: https://trymaple.ai
+build: [make]
+description:
+  short: OpenAI-compatible API and chat page for Maple
+  long: Connect local clients to Maple's enclave-hosted inference through this proxy. Clients can supply their own Maple API key or use an optional service-wide default.
+assets:
+  license: LICENSE
+  icon: icon.png
+  instructions: instructions.md
+main:
+  type: docker
+  image: main
+  entrypoint: /usr/bin/tini
+  args: ["--", "/usr/local/bin/start-maple"]
+  mounts:
+    main: /data
+health-checks:
+  api:
+    name: Chat page and API proxy
+    success-message: The web server can reach the Maple Proxy API.
+    type: docker
+    image: main
+    entrypoint: curl
+    args: ["--fail", "--silent", "--output", "/dev/null", "http://127.0.0.1/health"]
+    inject: true
+    system: false
+    io-format: json
+config:
+  get:
+    type: script
+  set:
+    type: script
+volumes:
+  main:
+    type: data
+interfaces:
+  main:
+    name: Maple Proxy
+    description: Chat page and OpenAI-compatible API under /v1
+    tor-config:
+      port-mapping:
+        80: "80"
+    lan-config:
+      443:
+        ssl: true
+        internal: 80
+    ui: true
+    protocols: [tcp, http]
+dependencies: {}
+backup:
+  create:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args: [duplicity, create, /mnt/backup, /data]
+    mounts:
+      BACKUP: /mnt/backup
+      main: /data
+  restore:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args: [duplicity, restore, /mnt/backup, /data]
+    mounts:
+      BACKUP: /mnt/backup
+      main: /data

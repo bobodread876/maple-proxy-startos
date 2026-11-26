@@ -33,3 +33,5 @@ Use the **API** interface address with any OpenAI-compatible client. Point the c
 ### Configure action
 
 Run **Configure** any time to change your API key or backend URL. The service restarts to pick up the new values.
+
+For StartOS 0.3.5.x, use the [legacy package instructions](https://github.com/bobodread876/maple-proxy-startos/blob/main/legacy/instructions.md).
