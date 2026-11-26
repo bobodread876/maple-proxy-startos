@@ -203,3 +203,7 @@ health_checks:
 backup_volumes:
   - main
 ```
+
+## StartOS 0.3.5.x
+
+The legacy wrapper lives in [legacy](legacy/). It uses the prebuilt upstream proxy and the shared chat page. With the StartOS 0.3.5.1 SDK initialized, Deno, yq, Docker Buildx and cross-architecture emulation installed, run `make -C legacy` to build and verify a universal package. See the [legacy service instructions](legacy/instructions.md) for configuration and backup details.
